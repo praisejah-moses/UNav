@@ -1,95 +1,64 @@
-import Image from 'next/image'
+'use client'
 import styles from './page.module.css'
+import mapboxgl from 'mapbox-gl';
+import 'mapbox-gl/dist/mapbox-gl.css';
+import { useEffect } from 'react';
+
+mapboxgl.accessToken = 'pk.eyJ1IjoiamFlMW1vc2VzIiwiYSI6ImNsazhzbndiaDBsaWMzaHA2Y3d1dWt4cXkifQ.YkSfMsj0n0YHGHFZ3IPx7Q';
+
+
 
 export default function Home() {
+  const bounds =[
+    [5.609220, 6.393766], // Southwest coordinates
+    [5.633803, 6.407058] // Northeast coordinates
+    ];
+
+
+  useEffect(()=>{
+    const map = new mapboxgl.Map({
+      container: 'map-container',
+      style: 'mapbox://styles/jae1moses/clkryrcvf00qm01pcgo9839se',
+      center: [5.612430, 6.399870], // starting position
+      zoom: 16, // starting zoom
+      // maxBounds: bounds // Set the map's geographical boundaries.
+    });
+
+    if ('geolocation' in navigator) {
+      // Get user's current position
+      navigator.geolocation.getCurrentPosition(function (position) {
+        var userLng = position.coords.longitude;
+        var userLat = position.coords.latitude
+        console.log(userLng, userLat)
+
+        var marker = new mapboxgl.Marker().setLngLat([userLng, userLat]).addTo(map);
+      })
+    }
+    
+    map.addControl(new mapboxgl.NavigationControl());
+
+    map.addControl(
+      new mapboxgl.GeolocateControl({
+      positionOptions: {
+      enableHighAccuracy: true
+      },
+      // When active the map will receive updates to the device's location as it changes.
+      trackUserLocation: true,
+      // Draw an arrow next to the location dot to indicate which direction the device is heading.
+      showUserHeading: true
+      })
+      );
+  },[])
+
   return (
-    <main className={styles.main}>
-      <div className={styles.description}>
-        <p>
-          Get started by editing&nbsp;
-          <code className={styles.code}>src/app/page.js</code>
-        </p>
-        <div>
-          <a
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{' '}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className={styles.vercelLogo}
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
-      </div>
-
-      <div className={styles.center}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-
-      <div className={styles.grid}>
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Docs <span>-&gt;</span>
-          </h2>
-          <p>Find in-depth information about Next.js features and API.</p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Learn <span>-&gt;</span>
-          </h2>
-          <p>Learn about Next.js in an interactive course with&nbsp;quizzes!</p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Templates <span>-&gt;</span>
-          </h2>
-          <p>Explore the Next.js 13 playground.</p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Deploy <span>-&gt;</span>
-          </h2>
-          <p>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
+    <>
+    <main className='main'>
+      <div className='map-container' id="map-container"/>
+      <script>
+ 
+      </script>
+     </main>
+    </>
+    
   )
 }
